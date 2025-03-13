@@ -2,72 +2,89 @@ import UIKit
 import SnapKit
 import SofaAcademic
 
-//Ovaj CustomView je izgeneriran kako bi se isprobalo moze li se simulator pokrenuti normalno
+
 
 class CustomView: BaseView {
+
+    private let logoImageView = UIImageView()
+    private let countryLabel = UILabel()
+    private let icon = UIImageView()
+    private let leagueLabel = UILabel()
+
+    private var laLigaLeague: League
     
-    // UI elementi
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Hello, Custom View!"
-        label.textColor = .white
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private let button: UIButton = {
-        let button = UIButton()
-        button.setTitle("Tap me!", for: .normal)
-        button.backgroundColor = .blue
-        button.layer.cornerRadius = 10
-        return button
-    }()
-    
+    init(laLigaLeague: League ) {
+        self.laLigaLeague = laLigaLeague
+        super.init()
+    }
+
     override func addViews() {
-        // Dodajemo subview-ove u naš CustomView
-        addSubview(titleLabel)
-        addSubview(button)
+        addSubview(logoImageView)
+        addSubview(countryLabel)
+        addSubview(icon)
+        addSubview(leagueLabel)
     }
 
     override func styleViews() {
-        // Stiliziramo naše subview-ove
-        backgroundColor = .darkGray
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.clipsToBounds = true
+        
+        backgroundColor = .white
+        
+        countryLabel.font = UIFont(name: "Roboto-Regular",size: 14)
+        countryLabel.textColor = .black
+        
+        leagueLabel.font = UIFont(name: "Roboto-Regular",size: 14)
+        leagueLabel.textColor = .gray
+        
+        icon.contentMode = .scaleAspectFit
+        icon.image = UIImage(named: "ic_pointer_right")
+
+        if let logoUrl = laLigaLeague.logoUrl, let url = URL(string: logoUrl) {
+            loadImage(from: url)
+        }
+        if let countryName = laLigaLeague.country?.name {
+                  countryLabel.text = countryName
+              }
+        leagueLabel.text = laLigaLeague.name
     }
 
     override func setupConstraints() {
-        // Postavljanje SnapKit constraints-a
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(50)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+        logoImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(32)
+            make.leading.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(12)
         }
-        
-        button.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(200)
-            make.height.equalTo(50)
+        countryLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(80)
+            make.top.equalToSuperview().offset(20)
+        }
+        icon.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(116)
+            make.top.equalToSuperview().offset(16)
+        }
+        leagueLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(140)
+            make.top.equalToSuperview().offset(20)
         }
     }
 
     override func setupGestureRecognizers() {
-        // Postavljanje gesture recognizera
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        addGestureRecognizer(tapGesture)
-    }
-
-    @objc private func handleTap() {
-        print("CustomView tapped!")
+        // Ovdje možete dodati gesture recognizere ako su potrebni
     }
 
     override func setupBinding() {
-        // Postavljanje bindinga za dugme
-        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        // Ovdje možete postaviti bindings ako koristite neki reactive framework
     }
 
-    @objc private func buttonTapped() {
-        print("Button tapped!")
+    private func loadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.logoImageView.image = image
+                }
+            }
+        }.resume()
     }
 }
-
