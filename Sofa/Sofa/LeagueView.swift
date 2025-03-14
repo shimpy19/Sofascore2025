@@ -4,7 +4,7 @@ import SofaAcademic
 
 
 
-class CustomView: BaseView {
+class LeagueView: BaseView {
 
     private let logoImageView = UIImageView()
     private let countryLabel = UILabel()
@@ -59,14 +59,22 @@ class CustomView: BaseView {
         countryLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(80)
             make.top.equalToSuperview().offset(20)
+            make.width.equalTo(36)
+            make.height.equalTo(16)
         }
         icon.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
             make.leading.equalToSuperview().offset(116)
             make.top.equalToSuperview().offset(16)
         }
         leagueLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(140)
             make.top.equalToSuperview().offset(20)
+            make.width.equalTo(91)
+            make.height.equalTo(16)
+        }
+        self.snp.makeConstraints { make in
+            make.height.equalTo(56)
         }
     }
 

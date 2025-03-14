@@ -23,21 +23,21 @@ class ViewController: UIViewController {
 
         if let laLigaLeague = laLigaLeague {
 
-            let customView = CustomView(laLigaLeague: laLigaLeague)
-            self.view.addSubview(customView)
+            let leagueView = LeagueView(laLigaLeague: laLigaLeague)
+            self.view.addSubview(leagueView)
 
-            customView.snp.makeConstraints { make in
+            leagueView.snp.makeConstraints { make in
                 make.top.equalTo(192)
                 make.height.equalTo(56)
                 make.width.equalToSuperview()
             }
 
 
-            let customView2 = CustomView2(laLigaLeague: laLigaLeague, events: events)
-            self.view.addSubview(customView2)
+            let gamesView = GamesView( events: events)
+            self.view.addSubview(gamesView)
 
-            customView2.snp.makeConstraints { make in
-                make.top.equalTo(customView.snp.bottom)
+            gamesView.snp.makeConstraints { make in
+                make.top.equalTo(leagueView.snp.bottom)
                 make.leading.trailing.bottom.equalToSuperview()
             }
         }
