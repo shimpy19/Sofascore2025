@@ -26,19 +26,19 @@ class ViewController: UIViewController {
             let leagueView = LeagueView(laLigaLeague: laLigaLeague)
             self.view.addSubview(leagueView)
 
-            leagueView.snp.makeConstraints { make in
-                make.top.equalTo(192)
-                make.height.equalTo(56)
-                make.width.equalToSuperview()
+            leagueView.snp.makeConstraints {
+                $0.top.equalTo(192)
+                $0.height.equalTo(56)
+                $0.leading.trailing.equalToSuperview()
             }
 
 
             let gamesView = GamesView( events: events)
             self.view.addSubview(gamesView)
 
-            gamesView.snp.makeConstraints { make in
-                make.top.equalTo(leagueView.snp.bottom)
-                make.leading.trailing.bottom.equalToSuperview()
+            gamesView.snp.makeConstraints {
+                $0.top.equalTo(leagueView.snp.bottom)
+                $0.leading.trailing.bottom.equalToSuperview()
             }
         }
     }
