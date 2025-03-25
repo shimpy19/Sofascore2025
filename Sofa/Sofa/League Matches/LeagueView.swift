@@ -9,10 +9,10 @@ class LeagueView: BaseView {
     private let iconImageView = UIImageView()
     private let leagueLabel = UILabel()
 
-    private let laLigaLeague: League
+    private let league: League
     
-    init(laLigaLeague: League ) {
-        self.laLigaLeague = laLigaLeague
+    init(league: League ) {
+        self.league = league
         super.init()
     }
 
@@ -30,7 +30,7 @@ class LeagueView: BaseView {
         
         backgroundColor = .white
         
-        countryLabel.font = .regular14
+        countryLabel.font = .bold14
         countryLabel.textColor = .primaryText
         
         leagueLabel.font = .regular14
@@ -39,13 +39,11 @@ class LeagueView: BaseView {
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.image = UIImage(named: "ic_pointer_right")
 
-        if let logoUrl = laLigaLeague.logoUrl, let url = URL(string: logoUrl) {
-            logoImageView.loadImage(from: url)
-        }
-        if let countryName = laLigaLeague.country?.name {
-                  countryLabel.text = countryName
-              }
-        leagueLabel.text = laLigaLeague.name
+        if let logoUrl = league.logoUrl, let url = URL(string: logoUrl) {
+            logoImageView.loadImage(from: url)}
+
+        countryLabel.text = league.country?.name
+        leagueLabel.text = league.name
     }
 
     override func setupConstraints() {

@@ -47,26 +47,10 @@ class EventViewModel {
         }
     }
     
-    var scoreColor: UIColor {
-        if event.status == .inProgress {
-            return .inProgress
-        } else {
-            return .secondaryText
-        }
-    }
-    
     var formattedStartTime: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         let startDate = Date(timeIntervalSince1970: TimeInterval(event.startTimestamp))
         return formatter.string(from: startDate)
-    }
-    
-    var homeScoreText: String {
-        return event.homeScore != nil ? "\(event.homeScore!)" : ""
-    }
-    
-    var awayScoreText: String {
-        return event.awayScore != nil ? "\(event.awayScore!)" : ""
     }
 }

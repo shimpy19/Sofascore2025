@@ -30,9 +30,9 @@ class GamesView: BaseView {
     }
 
     override func setupConstraints() {
-            stackView.snp.makeConstraints {
-                $0.leading.trailing.top.equalToSuperview()
-                $0.bottom.equalToSuperview()
+        stackView.snp.makeConstraints {
+            $0.leading.trailing.top.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
     }
         

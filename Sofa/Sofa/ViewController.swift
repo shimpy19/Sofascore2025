@@ -6,38 +6,44 @@
 //
 
 import UIKit
-import SofaAcademic
 import SnapKit
+import SofaAcademic
 
 class ViewController: UIViewController {
-
-    var dataSource = Homework2DataSource()
-    var laLigaLeague: League?
-    var events: [Event] = []
+    
+    let dataSource = Homework3DataSource()
+    let sportSelectorMenu = SportSelectorMenuView()
+    var leagueMatchesView: LeagueMatchesView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .backgroundMain
+        view.addSubview(sportSelectorMenu)
 
-        laLigaLeague = dataSource.laLigaLeague()
-        events = dataSource.laLigaEvents()
+        sportSelectorMenu.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(48)
+        }
 
-        if let laLigaLeague = laLigaLeague {
+        let allEvents = dataSource.events()
+        var leagues: [League] = []
+        var addedLeagues = Set<Int>() 
 
-            let leagueView = LeagueView(laLigaLeague: laLigaLeague)
-            self.view.addSubview(leagueView)
-
-            leagueView.snp.makeConstraints {
-                $0.top.equalTo(192)
-                $0.height.equalTo(56)
-                $0.leading.trailing.equalToSuperview()
+        for event in allEvents {
+            if let league = event.league, !addedLeagues.contains(league.id) {
+                leagues.append(league)
+                addedLeagues.insert(league.id)
             }
+        }
 
-
-            let gamesView = GamesView( events: events)
-            self.view.addSubview(gamesView)
-
-            gamesView.snp.makeConstraints {
-                $0.top.equalTo(leagueView.snp.bottom)
+        leagueMatchesView = LeagueMatchesView(leagues: leagues, events: allEvents)
+        
+        if let leagueMatchesView = leagueMatchesView {
+            view.addSubview(leagueMatchesView)
+            leagueMatchesView.snp.makeConstraints {
+                $0.top.equalTo(sportSelectorMenu.snp.bottom)
                 $0.leading.trailing.bottom.equalToSuperview()
             }
         }
