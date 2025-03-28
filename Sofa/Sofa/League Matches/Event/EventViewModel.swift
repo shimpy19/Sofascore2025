@@ -47,14 +47,6 @@ class EventViewModel {
         }
     }
     
-    var scoreColor: UIColor {
-        if event.status == .inProgress {
-            return .inProgress
-        } else {
-            return .secondaryText
-        }
-    }
-    
     var formattedStartTime: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -62,11 +54,22 @@ class EventViewModel {
         return formatter.string(from: startDate)
     }
     
-    var homeScoreText: String {
-        return event.homeScore != nil ? "\(event.homeScore!)" : ""
+    var homeTeamViewModel: EventTeamViewModel {
+        EventTeamViewModel(
+            name: event.homeTeam.name,
+            logoUrl: event.homeTeam.logoUrl,
+            score: event.homeScore != nil ? "\(event.homeScore!)" : "",
+            scoreColor: event.status == .inProgress ? .inProgress : .secondaryText
+        )
     }
-    
-    var awayScoreText: String {
-        return event.awayScore != nil ? "\(event.awayScore!)" : ""
+
+    var awayTeamViewModel: EventTeamViewModel {
+        EventTeamViewModel(
+            name: event.awayTeam.name,
+            logoUrl: event.awayTeam.logoUrl,
+            score: event.awayScore != nil ? "\(event.awayScore!)" : "",
+            scoreColor: event.status == .inProgress ? .inProgress : .secondaryText
+        )
     }
+
 }
