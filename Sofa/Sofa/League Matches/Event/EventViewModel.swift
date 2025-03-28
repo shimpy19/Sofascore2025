@@ -53,4 +53,23 @@ class EventViewModel {
         let startDate = Date(timeIntervalSince1970: TimeInterval(event.startTimestamp))
         return formatter.string(from: startDate)
     }
+    
+    var homeTeamViewModel: EventTeamViewModel {
+        EventTeamViewModel(
+            name: event.homeTeam.name,
+            logoUrl: event.homeTeam.logoUrl,
+            score: event.homeScore != nil ? "\(event.homeScore!)" : "",
+            scoreColor: event.status == .inProgress ? .inProgress : .secondaryText
+        )
+    }
+
+    var awayTeamViewModel: EventTeamViewModel {
+        EventTeamViewModel(
+            name: event.awayTeam.name,
+            logoUrl: event.awayTeam.logoUrl,
+            score: event.awayScore != nil ? "\(event.awayScore!)" : "",
+            scoreColor: event.status == .inProgress ? .inProgress : .secondaryText
+        )
+    }
+
 }

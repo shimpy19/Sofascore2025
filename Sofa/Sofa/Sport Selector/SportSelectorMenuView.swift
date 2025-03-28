@@ -7,49 +7,57 @@
 import UIKit
 import SnapKit
 import SofaAcademic
+
 class SportSelectorMenuView: BaseView {
 
     private let sports: [Sport] = [.football, .basketball, .americanFootball]
-    private let stackView = UIStackView()
-    private let whiteBarView = UIView()
+    private let horizontalStackView = UIStackView()
+    private let indicatorView = UIView()
     private var selectedSportView: SportView?
 
     override func addViews() {
-        addSubview(stackView)
-        addSubview(whiteBarView)
-
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fillEqually
+        addSubview(horizontalStackView)
+        addSubview(indicatorView)
 
         sports.forEach { sport in
             let sportView = SportView(sport: sport)
-            stackView.addArrangedSubview(sportView)
+            horizontalStackView.addArrangedSubview(sportView)
         }
     }
 
     override func styleViews() {
         backgroundColor = .sofaBlue
 
-        whiteBarView.backgroundColor = .white
-        whiteBarView.layer.cornerRadius = 2
+        horizontalStackView.axis = .horizontal
+        horizontalStackView.alignment = .fill
+        horizontalStackView.distribution = .fillEqually
+
+        indicatorView.backgroundColor = .background
+        indicatorView.layer.cornerRadius = 2
     }
 
     override func setupConstraints() {
-        stackView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
+        horizontalStackView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
         }
 
-        whiteBarView.snp.makeConstraints { make in
-            make.height.equalTo(4)
-            make.bottom.equalToSuperview()
-            make.width.equalTo(104)
-            make.centerX.equalTo(stackView.arrangedSubviews.first!.snp.centerX)
+        // Postavi indikator ispod prvog taba
+        if let firstSportView = horizontalStackView.arrangedSubviews.first {
+            indicatorView.snp.makeConstraints { make in
+                make.top.equalTo(horizontalStackView.snp.bottom)
+                make.height.equalTo(4)
+                make.width.equalTo(firstSportView.snp.width).multipliedBy(0.8)
+                make.centerX.equalTo(firstSportView.snp.centerX)
+                make.bottom.equalToSuperview()
+            }
+
+            selectedSportView = firstSportView as? SportView
         }
     }
 
     override func setupGestureRecognizers() {
-        stackView.arrangedSubviews.forEach { view in
+        horizontalStackView.arrangedSubviews.forEach { view in
             guard let sportView = view as? SportView else { return }
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSportTap(_:)))
             sportView.addGestureRecognizer(tapGesture)
@@ -63,11 +71,12 @@ class SportSelectorMenuView: BaseView {
         selectedSportView = tappedSportView
 
         UIView.animate(withDuration: 0.3) {
-            self.whiteBarView.snp.remakeConstraints { make in
+            self.indicatorView.snp.remakeConstraints { make in
+                make.top.equalTo(self.horizontalStackView.snp.bottom)
                 make.height.equalTo(4)
-                make.bottom.equalToSuperview()
-                make.width.equalTo(104)
+                make.width.equalTo(tappedSportView.snp.width).multipliedBy(0.8)
                 make.centerX.equalTo(tappedSportView.snp.centerX)
+                make.bottom.equalToSuperview()
             }
             self.layoutIfNeeded()
         }

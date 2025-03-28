@@ -31,6 +31,10 @@ class SportView: BaseView {
 
     override func styleViews() {
         
+        titleLabel.numberOfLines = 1
+        titleLabel.lineBreakMode = .byTruncatingTail
+
+        
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = .background 
 
@@ -40,16 +44,17 @@ class SportView: BaseView {
     }
 
     override func setupConstraints() {
-        iconImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(4)
-            make.centerX.equalToSuperview()
-            make.size.equalTo(16)
+        iconImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(4)
+            $0.centerX.equalToSuperview()
+            $0.size.equalTo(16)
+            $0.bottom.equalTo(titleLabel.snp.top).inset(-4)
         }
 
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(iconImageView.snp.bottom).offset(8)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-8)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(iconImageView.snp.bottom).inset(4)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-4)
         }
     }
 }
