@@ -16,16 +16,6 @@ class LeagueView: BaseView {
     private let iconImageView = UIImageView()
     private let leagueLabel = UILabel()
 
-    func update(with league: League) {
-        if let logoUrl = league.logoUrl, let url = URL(string: logoUrl) {
-            logoImageView.loadImage(from: url)
-        } else {
-            logoImageView.image = nil
-        }
-        countryLabel.text = league.country?.name
-        leagueLabel.text = league.name
-    }
-
     override func addViews() {
         addSubview(logoImageView)
         addSubview(countryLabel)
@@ -34,7 +24,7 @@ class LeagueView: BaseView {
     }
 
     override func styleViews() {
-        backgroundColor = .white
+        backgroundColor = .background
 
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.clipsToBounds = true
@@ -71,5 +61,11 @@ class LeagueView: BaseView {
             $0.leading.equalTo(iconImageView.snp.trailing)
             $0.top.bottom.equalToSuperview().inset(20)
         }
+    }
+    
+    func update(with league: League) {
+        logoImageView.setImage(with: league.logoUrl)
+        countryLabel.text = league.country?.name
+        leagueLabel.text = league.name
     }
 }

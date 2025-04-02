@@ -83,7 +83,6 @@ class EventView: BaseView {
     }
 
     func update(with viewModel: EventViewModel) {
-        self.viewModel = viewModel
         timeLabel.textColor = viewModel.timeColor
         timeLabel.text = viewModel.timeText
         startTimeLabel.text = viewModel.formattedStartTime

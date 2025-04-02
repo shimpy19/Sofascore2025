@@ -9,22 +9,37 @@ import UIKit
 import SnapKit
 import SofaAcademic
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,BaseViewProtocol {
 
     let dataSource = Homework3DataSource()
     let sportSelectorMenu = SportSelectorMenuView()
     private let tableView = UITableView(frame: .zero, style: .plain)
+    private let Button = UIButton()
 
     private var leagues: [League] = []
     private var eventsByLeague: [Int: [Event]] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        addViews()
+        styleViews()
+        setupConstraints()
 
-        view.backgroundColor = .backgroundMain
+        setupTableView()
+        loadData()
+    }
+    
+    func addViews() {
         view.addSubview(sportSelectorMenu)
         view.addSubview(tableView)
-
+        view.addSubview(Button)
+    }
+    
+    func styleViews() {
+        view.backgroundColor = .backgroundMain
+    }
+    
+    func setupConstraints() {
         sportSelectorMenu.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(tableView.snp.top)
@@ -34,10 +49,9 @@ class ViewController: UIViewController {
             $0.top.equalTo(sportSelectorMenu.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
-        setupTableView()
-        loadData()
     }
+
+        
 
     private func setupTableView() {
         tableView.delegate = self
@@ -88,7 +102,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LeagueHeaderView.reuseIdentifier) as? LeagueHeaderView else {
             return nil
         }
-        header.league = league
+        header.configure(with: league)
         return header
     }
 

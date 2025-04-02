@@ -47,13 +47,11 @@ class EventTeamView: BaseView {
 
         teamNameLabel.snp.makeConstraints {
             $0.leading.equalTo(teamLogoImageView.snp.trailing).offset(8)
-            $0.centerY.equalToSuperview()
             $0.top.bottom.equalToSuperview()
         }
 
         teamScoreLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
             $0.top.bottom.equalToSuperview()
         }
     }
@@ -62,9 +60,7 @@ class EventTeamView: BaseView {
         teamNameLabel.text = viewModel.name
         teamScoreLabel.text = viewModel.score
         teamScoreLabel.textColor = viewModel.scoreColor
+        teamLogoImageView.setImage(with: viewModel.logoUrl)
 
-        if let urlString = viewModel.logoUrl, let url = URL(string: urlString) {
-            teamLogoImageView.loadImage(from: url)
-        }
     }
 }

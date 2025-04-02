@@ -10,7 +10,7 @@ import UIKit
 struct EventTeamViewModel {
     let name: String
     let logoUrl: String?
-    let score: String
+    let score: String?
     let scoreColor: UIColor
 }
 

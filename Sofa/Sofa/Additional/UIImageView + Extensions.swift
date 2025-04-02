@@ -23,4 +23,13 @@ import UIKit
             }
         }
     }
+     
+    func setImage(with urlString: String?) {
+         guard let urlString = urlString, let url = URL(string: urlString) else {
+             self.image = nil
+             return
+         }
+         self.loadImage(from: url)
+     }
+
 }
