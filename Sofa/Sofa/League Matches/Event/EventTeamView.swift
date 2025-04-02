@@ -10,50 +10,57 @@ import SnapKit
 import SofaAcademic
 
 class EventTeamView: BaseView {
-    
+
     private let teamLogoImageView = UIImageView()
     private let teamNameLabel = UILabel()
+    private let teamScoreLabel = UILabel()
     
-    private let team: Team
-    private let event: Event
-    
-    init(team: Team, event: Event) {
-        self.team = team
-        self.event = event
+    override init() {
         super.init()
     }
-    
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func addViews() {
         addSubview(teamLogoImageView)
         addSubview(teamNameLabel)
+        addSubview(teamScoreLabel)
     }
-    
+
     override func styleViews() {
         teamLogoImageView.contentMode = .scaleAspectFit
-        
+
         teamNameLabel.font = .regular14
         teamNameLabel.textColor = .primaryText
-        
-        if let logoUrl = team.logoUrl, let url = URL(string: logoUrl) {
-            teamLogoImageView.loadImage(from: url)
-        }
-        
-        teamNameLabel.text = team.name
+
+        teamScoreLabel.font = .regular14
     }
-    
+
     override func setupConstraints() {
         teamLogoImageView.snp.makeConstraints {
             $0.size.equalTo(16)
+            $0.leading.top.bottom.equalToSuperview()
+            $0.centerY.equalToSuperview()
         }
-        
+
         teamNameLabel.snp.makeConstraints {
             $0.leading.equalTo(teamLogoImageView.snp.trailing).offset(8)
-            $0.height.equalTo(16)
-            
+            $0.top.bottom.equalToSuperview()
         }
-        self.snp.makeConstraints {
-            $0.height.equalTo(16)
-            
+
+        teamScoreLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.top.bottom.equalToSuperview()
         }
+    }
+
+    func update(with viewModel: EventTeamViewModel) {
+        teamNameLabel.text = viewModel.name
+        teamScoreLabel.text = viewModel.score
+        teamScoreLabel.textColor = viewModel.scoreColor
+        teamLogoImageView.setImage(with: viewModel.logoUrl)
+
     }
 }
