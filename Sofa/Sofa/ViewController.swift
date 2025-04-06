@@ -4,17 +4,17 @@
 //
 //  Created by Akademija on 11.03.2025..
 //
-
+import Foundation
 import UIKit
 import SnapKit
 import SofaAcademic
 
-class ViewController: UIViewController,BaseViewProtocol {
+class ViewController: UIViewController, BaseViewProtocol {
 
-    let dataSource = Homework3DataSource()
     let sportSelectorMenu = SportSelectorMenuView()
     private let tableView = UITableView(frame: .zero, style: .plain)
-    private let Button = UIButton()
+    private let headerView = HeaderView()
+    private let safeAreaFillView = SafeAreaFillView()
 
     private var leagues: [League] = []
     private var eventsByLeague: [Int: [Event]] = [:]
@@ -25,23 +25,34 @@ class ViewController: UIViewController,BaseViewProtocol {
         styleViews()
         setupConstraints()
 
+        headerView.onSettingsTapped = { [weak self] in
+            let settingsVC = SettingsViewController()
+            self?.navigationController?.pushViewController(settingsVC, animated: true)
+        }
+
         setupTableView()
-        loadData()
+        loadData(sport: .football)
+        
+        sportSelectorMenu.onSportSelected = { [weak self] sport in
+            self?.loadData(sport: sport)
+        }
     }
-    
+
     func addViews() {
+        view.addSubview(safeAreaFillView)
         view.addSubview(sportSelectorMenu)
         view.addSubview(tableView)
-        view.addSubview(Button)
+        view.addSubview(headerView)
     }
-    
+
     func styleViews() {
         view.backgroundColor = .backgroundMain
     }
-    
+
     func setupConstraints() {
         sportSelectorMenu.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(headerView.snp.bottom)
             $0.bottom.equalTo(tableView.snp.top)
         }
 
@@ -49,9 +60,18 @@ class ViewController: UIViewController,BaseViewProtocol {
             $0.top.equalTo(sportSelectorMenu.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-    }
 
-        
+        headerView.snp.makeConstraints {
+            $0.bottom.equalTo(sportSelectorMenu.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+        }
+
+        safeAreaFillView.snp.makeConstraints {
+            $0.bottom.equalTo(headerView.snp.top)
+            $0.leading.trailing.top.equalToSuperview()
+        }
+    }
 
     private func setupTableView() {
         tableView.delegate = self
@@ -62,18 +82,31 @@ class ViewController: UIViewController,BaseViewProtocol {
         tableView.register(LeagueHeaderView.self, forHeaderFooterViewReuseIdentifier: LeagueHeaderView.reuseIdentifier)
         tableView.sectionHeaderTopPadding = 0
     }
+    private func loadData(sport: Sport) {
+        Task {
+            do {
+                let allEvents = try await APIClient.getEvents(sport: sport)
+                var addedLeagueIds = Set<Int>()
+                var newLeagues: [League] = []
+                var newEventsByLeague: [Int: [Event]] = [:]
 
-    private func loadData() {
-        let allEvents = dataSource.events()
-        var addedLeagueIds = Set<Int>()
+                for event in allEvents {
+                    let league = event.league
+                    if !addedLeagueIds.contains(league.id) {
+                        newLeagues.append(league)
+                        addedLeagueIds.insert(league.id)
+                    }
+                    newEventsByLeague[league.id, default: []].append(event)
+                }
 
-        for event in allEvents {
-            guard let league = event.league else { continue }
-            if !addedLeagueIds.contains(league.id) {
-                leagues.append(league)
-                addedLeagueIds.insert(league.id)
+                DispatchQueue.main.async {
+                    self.leagues = newLeagues
+                    self.eventsByLeague = newEventsByLeague
+                    self.tableView.reloadData()
+                }
+            } catch {
+                print("Failed to load events for sport \(sport): \(error)")
             }
-            eventsByLeague[league.id, default: []].append(event)
         }
     }
 }
@@ -114,8 +147,16 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         if let event = eventsByLeague[league.id]?[indexPath.row] {
             let viewModel = EventViewModel(event: event)
             cell.configure(with: viewModel)
-
         }
         return cell
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let league = leagues[indexPath.section]
+        guard let event = eventsByLeague[league.id]?[indexPath.row] else { return }
+
+        let detailsVC = MatchDetailsViewController(event: event)
+        navigationController?.pushViewController(detailsVC, animated: true)
+    }
+    
 }

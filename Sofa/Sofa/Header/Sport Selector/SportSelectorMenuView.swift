@@ -14,6 +14,8 @@ class SportSelectorMenuView: BaseView {
     private let horizontalStackView = UIStackView()
     private let indicatorView = UIView()
     private var selectedSportView: SportView?
+    var onSportSelected: ((Sport) -> Void)?
+
 
     override func addViews() {
         addSubview(horizontalStackView)
@@ -37,19 +39,17 @@ class SportSelectorMenuView: BaseView {
     }
 
     override func setupConstraints() {
-        horizontalStackView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
+        horizontalStackView.snp.makeConstraints {
+            $0.leading.trailing.top.equalToSuperview()
         }
-
-        // Postavi indikator ispod prvog taba
+        
         if let firstSportView = horizontalStackView.arrangedSubviews.first {
-            indicatorView.snp.makeConstraints { make in
-                make.top.equalTo(horizontalStackView.snp.bottom)
-                make.height.equalTo(4)
-                make.width.equalTo(firstSportView.snp.width).multipliedBy(0.8)
-                make.centerX.equalTo(firstSportView.snp.centerX)
-                make.bottom.equalToSuperview()
+            indicatorView.snp.makeConstraints {
+                $0.top.equalTo(horizontalStackView.snp.bottom)
+                $0.height.equalTo(4)
+                $0.width.equalTo(firstSportView.snp.width).multipliedBy(0.8)
+                $0.centerX.equalTo(firstSportView.snp.centerX)
+                $0.bottom.equalToSuperview()
             }
 
             selectedSportView = firstSportView as? SportView
@@ -80,5 +80,6 @@ class SportSelectorMenuView: BaseView {
             }
             self.layoutIfNeeded()
         }
+        onSportSelected?(tappedSportView.sport)
     }
 }

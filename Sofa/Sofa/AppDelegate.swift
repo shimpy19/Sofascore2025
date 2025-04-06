@@ -12,10 +12,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow()
-        window?.rootViewController = ViewController()
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let rootVC = ViewController()
+        let navController = UINavigationController(rootViewController: rootVC)
+        window?.rootViewController = navController
         window?.makeKeyAndVisible()
-    
         return true
     }
     // MARK: UISceneSession Lifecycle

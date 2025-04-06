@@ -14,7 +14,7 @@ class SportView: BaseView {
 
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
-    private var sport: Sport?
+    var sport: Sport
 
      init(sport: Sport) {
         self.sport = sport

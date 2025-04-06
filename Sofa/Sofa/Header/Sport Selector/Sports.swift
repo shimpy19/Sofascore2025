@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum Sport {
-    case football
-    case basketball
-    case americanFootball
+enum Sport: String, CaseIterable {
+    case football = "football"
+    case basketball = "basketball"
+    case americanFootball = "am-football"
 
     var title: String {
         switch self {
@@ -34,4 +34,3 @@ enum Sport {
         }
     }
 }
-
