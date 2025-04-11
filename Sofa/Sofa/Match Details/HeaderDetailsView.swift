@@ -11,13 +11,13 @@ import SofaAcademic
 
 class HeaderDetailsView: BaseView {
 
-    private let logoImageView = UIImageView()
-    private let titleLabel = UILabel()
+    private let leagueLogoImageView = UIImageView()
+    private let eventDataLabel = UILabel()
     private let stackView = UIStackView()
 
     override func addViews() {
-        stackView.addArrangedSubview(logoImageView)
-        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(leagueLogoImageView)
+        stackView.addArrangedSubview(eventDataLabel)
         addSubview(stackView)
     }
 
@@ -26,25 +26,25 @@ class HeaderDetailsView: BaseView {
         stackView.spacing = 8
         stackView.alignment = .center
 
-        logoImageView.contentMode = .scaleAspectFit
+        leagueLogoImageView.contentMode = .scaleAspectFit
 
-        titleLabel.textColor = .secondaryText
-        titleLabel.font = .regular12
-        titleLabel.numberOfLines = 1
-        titleLabel.lineBreakMode = .byTruncatingTail
+        eventDataLabel.textColor = .secondaryText
+        eventDataLabel.font = .regular12
+        eventDataLabel.numberOfLines = 1
+        eventDataLabel.lineBreakMode = .byTruncatingTail
     }
 
     override func setupConstraints() {
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        logoImageView.snp.makeConstraints { $0.size.equalTo(16) }
+        leagueLogoImageView.snp.makeConstraints { $0.size.equalTo(16) }
     }
 
     func configure(with viewModel: HeaderDetailsViewModel) {
         if let urlString = viewModel.logoUrl, let url = URL(string: urlString) {
-            logoImageView.loadImage(from: url)
+            leagueLogoImageView.loadImage(from: url)
         }
-        titleLabel.text = viewModel.titleText
+        eventDataLabel.text = viewModel.titleText
     }
 }
