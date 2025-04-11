@@ -14,14 +14,11 @@ class SportView: BaseView {
 
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
-    var sport: Sport
+    let sport: Sport
 
      init(sport: Sport) {
         self.sport = sport
          super.init()
-
-          iconImageView.image = UIImage(named: sport.iconName)
-          titleLabel.text = sport.title
     }
 
     override func addViews() {
@@ -30,6 +27,9 @@ class SportView: BaseView {
     }
 
     override func styleViews() {
+        
+        iconImageView.image = UIImage(named: sport.iconName)
+        titleLabel.text = sport.title
         
         titleLabel.numberOfLines = 1
         titleLabel.lineBreakMode = .byTruncatingTail

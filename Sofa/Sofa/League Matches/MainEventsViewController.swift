@@ -9,30 +9,26 @@ import UIKit
 import SnapKit
 import SofaAcademic
 
-class ViewController: UIViewController, BaseViewProtocol {
+class MainEventsViewController: UIViewController, BaseViewProtocol {
 
     let sportSelectorMenu = SportSelectorMenuView()
     private let tableView = UITableView(frame: .zero, style: .plain)
-    private let headerView = HeaderView()
-    private let safeAreaFillView = SafeAreaFillView()
+    private let headerView = MainEventsHeaderView()
+    private let safeAreaFillView = UIView()
+    private let viewModel = MainEventsViewModel()
+    private var selectedSport: Sport = .football
 
-    private var leagues: [League] = []
-    private var eventsByLeague: [Int: [Event]] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
         addViews()
         styleViews()
         setupConstraints()
-
-        headerView.onSettingsTapped = { [weak self] in
-            let settingsVC = SettingsViewController()
-            self?.navigationController?.pushViewController(settingsVC, animated: true)
-        }
+        setupGestureRecognizers()
 
         setupTableView()
         loadData(sport: .football)
-        
+
         sportSelectorMenu.onSportSelected = { [weak self] sport in
             self?.loadData(sport: sport)
         }
@@ -47,6 +43,7 @@ class ViewController: UIViewController, BaseViewProtocol {
 
     func styleViews() {
         view.backgroundColor = .backgroundMain
+        safeAreaFillView.backgroundColor = .sofaBlue
     }
 
     func setupConstraints() {
@@ -73,6 +70,13 @@ class ViewController: UIViewController, BaseViewProtocol {
         }
     }
 
+    func setupGestureRecognizers() {
+        headerView.onSettingsTapped = { [weak self] in
+            let settingsVC = SettingsViewController()
+            self?.navigationController?.pushViewController(settingsVC, animated: true)
+        }
+    }
+
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -82,26 +86,13 @@ class ViewController: UIViewController, BaseViewProtocol {
         tableView.register(LeagueHeaderView.self, forHeaderFooterViewReuseIdentifier: LeagueHeaderView.reuseIdentifier)
         tableView.sectionHeaderTopPadding = 0
     }
+
     private func loadData(sport: Sport) {
+        selectedSport = sport
         Task {
             do {
-                let allEvents = try await APIClient.getEvents(sport: sport)
-                var addedLeagueIds = Set<Int>()
-                var newLeagues: [League] = []
-                var newEventsByLeague: [Int: [Event]] = [:]
-
-                for event in allEvents {
-                    let league = event.league
-                    if !addedLeagueIds.contains(league.id) {
-                        newLeagues.append(league)
-                        addedLeagueIds.insert(league.id)
-                    }
-                    newEventsByLeague[league.id, default: []].append(event)
-                }
-
+                try await viewModel.loadData(for: sport)
                 DispatchQueue.main.async {
-                    self.leagues = newLeagues
-                    self.eventsByLeague = newEventsByLeague
                     self.tableView.reloadData()
                 }
             } catch {
@@ -111,15 +102,16 @@ class ViewController: UIViewController, BaseViewProtocol {
     }
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return leagues.count
+        return viewModel.leagues.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let league = leagues[section]
-        return eventsByLeague[league.id]?.count ?? 0
+        guard section < viewModel.leagues.count else { return 0 }
+        let league = viewModel.leagues[section]
+        return viewModel.eventsByLeague[league.id]?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -131,7 +123,8 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let league = leagues[section]
+        guard section < viewModel.leagues.count else { return nil }
+        let league = viewModel.leagues[section]
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LeagueHeaderView.reuseIdentifier) as? LeagueHeaderView else {
             return nil
         }
@@ -140,23 +133,29 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.section < viewModel.leagues.count else { return UITableViewCell() }
+        let league = viewModel.leagues[indexPath.section]
+        guard let event = viewModel.eventsByLeague[league.id]?[indexPath.row] else { return UITableViewCell() }
+
         guard let cell = tableView.dequeueReusableCell(withIdentifier: EventCell.reuseIdentifier, for: indexPath) as? EventCell else {
             return UITableViewCell()
         }
-        let league = leagues[indexPath.section]
-        if let event = eventsByLeague[league.id]?[indexPath.row] {
-            let viewModel = EventViewModel(event: event)
-            cell.configure(with: viewModel)
-        }
+
+        let viewModel = EventViewModel(event: event)
+        cell.configure(with: viewModel)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let league = leagues[indexPath.section]
-        guard let event = eventsByLeague[league.id]?[indexPath.row] else { return }
+        guard indexPath.section < viewModel.leagues.count else { return }
+        let league = viewModel.leagues[indexPath.section]
+        guard let event = viewModel.eventsByLeague[league.id]?[indexPath.row] else { return }
 
-        let detailsVC = MatchDetailsViewController(event: event)
+        openMatchDetails(for: event, for: selectedSport)
+    }
+
+    private func openMatchDetails(for event: Event, for sport: Sport) {
+        let detailsVC = MatchDetailsViewController(event: event, sport: sport)
         navigationController?.pushViewController(detailsVC, animated: true)
     }
-    
 }

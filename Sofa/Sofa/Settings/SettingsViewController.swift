@@ -9,23 +9,24 @@ import UIKit
 import SnapKit
 import SofaAcademic
 
-class SettingsViewController: UIViewController,BaseViewProtocol {
-
-    private let dismissButton = UIButton()
+class SettingsViewController: UIViewController, BaseViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addViews()
         setupConstraints()
-        view.backgroundColor = .backgroundMain
-        
-        title = "Settings"
+        styleViews()
     }
     
     func addViews() {
         
     }
     func setupConstraints() {
+    }
+    func styleViews() {
+        view.backgroundColor = .backgroundMain
+        
+        title = "Settings"
     }
 }
 

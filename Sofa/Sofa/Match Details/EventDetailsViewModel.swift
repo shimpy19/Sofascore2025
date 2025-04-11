@@ -14,9 +14,14 @@ struct EventDetailsViewModel {
     let awayName: String
     let homeLogoUrl: String?
     let awayLogoUrl: String?
+    let homeScoreColor: UIColor
+    let awayScoreColor: UIColor
+    let homeScoreText: String?
+    let awayScoreText: String?
     
-    let scoreText: String?
-    let scoreColor: UIColor
+    let scoreDividerText: String?
+    let scoreDividerColor: UIColor
+    
     let dateText: String
     let timeText: String
     let timeColor: UIColor
@@ -26,49 +31,71 @@ struct EventDetailsViewModel {
         awayName = event.awayTeam.name
         homeLogoUrl = event.homeTeam.logoUrl
         awayLogoUrl = event.awayTeam.logoUrl
+        homeScoreText = event.homeScore.map { "\($0)" }
+        awayScoreText = event.awayScore.map { "\($0)" }
+
+        timeText = EventDetailsViewModel.makeTimeText(for: event)
+        dateText = EventDetailsViewModel.makeDateText(for: event)
+        timeColor = event.status == .inProgress ? .inProgress : .primaryText
+
+        let colors = EventDetailsViewModel.scoreColors(for: event)
+        homeScoreColor = colors.home
+        awayScoreColor = colors.away
         
-        // Score
-        if let home = event.homeScore, let away = event.awayScore {
-            scoreText = "\(home) - \(away)"
-        } else {
-            scoreText = nil
-        }
-        
+        let scoreDivider = EventDetailsViewModel.makeScoreDividerColorAndText(for: event)
+        scoreDividerText = scoreDivider.text
+        scoreDividerColor = scoreDivider.color
+    }
+
+    private static func makeTimeText(for event: Event) -> String {
         let currentTimestamp = Date().timeIntervalSince1970
         let elapsedTime = currentTimestamp - TimeInterval(event.startTimestamp)
         let date = Date(timeIntervalSince1970: TimeInterval(event.startTimestamp))
-        
-        if event.status == .notStarted {
-            timeText = EventDetailsViewModel.hourMinuteFormatter.string(from: date)
-        } else if event.status == .halftime {
-            timeText = "Half Time"
-        } else if event.status == .finished {
-            timeText = "Full Time"
-        } else {
+
+        switch event.status {
+        case .notStarted:
+            return date.hourMinute
+        case .halftime:
+            return "Half Time"
+        case .finished:
+            return "Full Time"
+        case .inProgress:
             let minutes = Int(elapsedTime / 60)
-            timeText = "\(minutes)'"
-        }
-        
-        timeColor = event.status == .inProgress ? .inProgress : .primaryText
-        scoreColor = event.status == .inProgress ? .inProgress : .primaryText
-        
-        if event.status == .notStarted {
-            dateText = EventDetailsViewModel.dateFormatter.string(from: date)}
-        else {
-            dateText = ""
+            return "\(minutes)'"
+        default:
+            return ""
         }
     }
 
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy. \nHH:mm"
-        return formatter
-    }()
-    
-    private static let hourMinuteFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
+    private static func makeDateText(for event: Event) -> String {
+        guard event.status == .notStarted else { return "" }
+        let date = Date(timeIntervalSince1970: TimeInterval(event.startTimestamp))
+        return date.dayMonthYearTime
+    }
+    private static func scoreColors(for event: Event) -> (home: UIColor, away: UIColor) {
+        guard let home = event.homeScore, let away = event.awayScore else {
+            return (.primaryText, .primaryText)
+        }
 
+        guard event.status == .finished else {
+            return (.inProgress, .inProgress)
+        }
+
+        if home > away {
+            return (.primaryText, .secondaryText)
+        } else if away > home {
+            return (.secondaryText, .primaryText)
+        } else {
+            return (.primaryText, .primaryText)
+        }
+    }
+    private static func makeScoreDividerColorAndText(for event: Event) -> (color:UIColor, text: String?) {
+        if event.status == .notStarted {
+            return (.primaryText, nil)
+        } else if event.status == .inProgress {
+            return (.inProgress, "-")
+        } else {
+            return (.primaryText, "-")
+        }
+    }
 }

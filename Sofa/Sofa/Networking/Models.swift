@@ -26,7 +26,7 @@ struct League: Decodable {
 }
 
 struct Event: Decodable {
-    let id: Int64
+    let id: Int
     let homeTeam: Team
     let awayTeam: Team
     let startTimestamp: Int64
