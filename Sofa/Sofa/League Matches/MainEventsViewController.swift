@@ -27,7 +27,7 @@ class MainEventsViewController: UIViewController, BaseViewProtocol {
         setupGestureRecognizers()
 
         setupTableView()
-        loadData(sport: .football)
+        loadData(sport: selectedSport)
 
         sportSelectorMenu.onSportSelected = { [weak self] sport in
             self?.loadData(sport: sport)
@@ -72,8 +72,7 @@ class MainEventsViewController: UIViewController, BaseViewProtocol {
 
     func setupGestureRecognizers() {
         headerView.onSettingsTapped = { [weak self] in
-            let settingsVC = SettingsViewController()
-            self?.navigationController?.pushViewController(settingsVC, animated: true)
+            self?.openSettings()
         }
     }
 
@@ -86,20 +85,20 @@ class MainEventsViewController: UIViewController, BaseViewProtocol {
         tableView.register(LeagueHeaderView.self, forHeaderFooterViewReuseIdentifier: LeagueHeaderView.reuseIdentifier)
         tableView.sectionHeaderTopPadding = 0
     }
-
     private func loadData(sport: Sport) {
         selectedSport = sport
         Task {
             do {
                 try await viewModel.loadData(for: sport)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                let allEvents = viewModel.eventsByLeague.values.flatMap { $0 }
+                DatabaseManager.shared.save(events: allEvents)
+                tableView.reloadData()
             } catch {
                 print("Failed to load events for sport \(sport): \(error)")
             }
         }
     }
+
 }
 
 extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
@@ -157,5 +156,9 @@ extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
     private func openMatchDetails(for event: Event, for sport: Sport) {
         let detailsVC = MatchDetailsViewController(event: event, sport: sport)
         navigationController?.pushViewController(detailsVC, animated: true)
+    }
+    private func openSettings() {
+        let settingsVC = SettingsViewController()
+        navigationController?.pushViewController(settingsVC, animated: true)
     }
 }

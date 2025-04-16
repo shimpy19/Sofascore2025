@@ -10,18 +10,22 @@ import SnapKit
 import SofaAcademic
 
 class SettingsViewController: UIViewController, BaseViewProtocol {
+    private let settingsView = SettingsView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        styleViews()
         addViews()
         setupConstraints()
-        styleViews()
     }
     
     func addViews() {
-        
+        view.addSubview(settingsView)
     }
     func setupConstraints() {
+        settingsView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     func styleViews() {
         view.backgroundColor = .backgroundMain

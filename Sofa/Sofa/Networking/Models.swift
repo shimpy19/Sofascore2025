@@ -43,3 +43,13 @@ public enum EventStatus: String, Decodable {
     case finished = "FINISHED"
 }
 
+struct LoginRequest: Encodable {
+    let username: String
+    let password: String
+}
+
+struct LoginResponse: Decodable {
+    let name: String
+    let token: String
+}
+
