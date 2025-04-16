@@ -41,7 +41,7 @@ class LeagueView: BaseView {
 
     override func setupConstraints() {
         logoImageView.snp.makeConstraints {
-            $0.width.height.equalTo(32)
+            $0.size.equalTo(32)
             $0.leading.equalToSuperview().offset(16)
             $0.top.bottom.equalToSuperview().inset(12)
         }
@@ -52,7 +52,7 @@ class LeagueView: BaseView {
         }
 
         iconImageView.snp.makeConstraints {
-            $0.width.height.equalTo(24)
+            $0.size.equalTo(24)
             $0.leading.equalTo(countryLabel.snp.trailing)
             $0.top.bottom.equalToSuperview().inset(16)
         }
@@ -65,7 +65,7 @@ class LeagueView: BaseView {
     
     func update(with league: League) {
         logoImageView.setImage(with: league.logoUrl)
-        countryLabel.text = league.country?.name
+        countryLabel.text = league.country.name
         leagueLabel.text = league.name
     }
 }

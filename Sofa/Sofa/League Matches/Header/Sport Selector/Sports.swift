@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Sport {
+enum Sport: String, CaseIterable {
     case football
     case basketball
     case americanFootball
@@ -33,5 +33,12 @@ enum Sport {
             return "ic_amfootball"
         }
     }
+        
+    var queryValue: String {
+                switch self {
+                case .football: return "football"
+                case .basketball: return "basketball"
+                case .americanFootball: return "am-football"
+        }
+    }
 }
-
