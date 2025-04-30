@@ -91,8 +91,7 @@ class MainEventsViewController: UIViewController, BaseViewProtocol {
             do {
                 try await viewModel.loadData(for: sport)
                 let allEvents = viewModel.eventsByLeague.values.flatMap { $0 }
-                DatabaseManager.shared.save(events: allEvents)
-                tableView.reloadData()
+                onDataLoaded(events: allEvents)
             } catch {
                 print("Failed to load events for sport \(sport): \(error)")
             }
@@ -161,4 +160,9 @@ extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
         let settingsVC = SettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
+    private func onDataLoaded(events: [Event]) {
+        StorageManager.shared.saveEvents(events)
+        tableView.reloadData()
+    }
+
 }

@@ -25,26 +25,18 @@ class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: LoginViewDelegate {
-    func loginViewDidTapLogin(_ loginView: LoginView, username: String, password: String) {
+    func loginTapHandler( username: String, password: String) {
         Task {
             do {
                 let response = try await APIClient.login(username: username, password: password)
                 try TokenStorage.save(token: response.token)
                 UserDefaults.standard.set(response.name, forKey: "username")
-                self.openMainEvents()
+                AppManager.shared.showMainScreen()
             } catch {
+                self.loginView.stopLoading(message: "Wrong username or password")
                 print("Login failed: \(error)")
             }
         }
-    }
-    private func openMainEvents() {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else { return }
-
-        let mainVC = MainEventsViewController()
-        let navVC = UINavigationController(rootViewController: mainVC)
-        window.rootViewController = navVC
-        window.makeKeyAndVisible()
     }
 }
 

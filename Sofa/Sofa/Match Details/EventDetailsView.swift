@@ -53,14 +53,11 @@ class EventDetailsView: BaseView {
         timeLabel.textAlignment = .center
         
         timeLabel.numberOfLines = 2
-        timeLabel.lineBreakMode = .byTruncatingTail
         
         homeTeamLabel.numberOfLines = 2
-        homeTeamLabel.lineBreakMode = .byTruncatingTail
         homeTeamLabel.textAlignment = .center
 
         awayTeamLabel.numberOfLines = 2
-        awayTeamLabel.lineBreakMode = .byTruncatingTail
         awayTeamLabel.textAlignment = .center
 
     }
