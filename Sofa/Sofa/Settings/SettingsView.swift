@@ -63,6 +63,9 @@ class SettingsView: BaseView {
         UserDefaults.standard.removeObject(forKey: "username")
         TokenStorage.clear()
         DatabaseManager.shared.deleteAll()
-        AppManager.shared.showLoginScreen()
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            AppManager.shared.showScreen(in: window, viewController:LoginViewController())
+        }
     }
 }

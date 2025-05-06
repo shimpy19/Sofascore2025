@@ -70,7 +70,7 @@ class LoginView: BaseView {
         
         
         passwordTextField.attributedPlaceholder = NSAttributedString(
-            string: "Enter username",
+            string: "Enter password",
             attributes: [.foregroundColor: UIColor.secondaryText]
         )
         passwordTextField.borderStyle = .roundedRect

@@ -6,30 +6,16 @@
 //
 import UIKit
 
-final class AppManager {
+enum AppManager {
     static let shared = AppManager()
 
     private init() {}
 
-    func showMainScreen() {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else { return }
-
-        let mainVC = MainEventsViewController()
-        let navVC = UINavigationController(rootViewController: mainVC)
+    func showScreen(in window: UIWindow, viewController: UIViewController) {
+        let navVC = UINavigationController(rootViewController: viewController)
         window.rootViewController = navVC
         window.makeKeyAndVisible()
     }
-    func showLoginScreen() {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else { return }
 
-        let mainVC = LoginViewController()
-        let navVC = UINavigationController(rootViewController: mainVC)
-        window.rootViewController = navVC
-        window.makeKeyAndVisible()
-    }
-    
-    
 }
 

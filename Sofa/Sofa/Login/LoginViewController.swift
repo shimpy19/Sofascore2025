@@ -31,7 +31,10 @@ extension LoginViewController: LoginViewDelegate {
                 let response = try await APIClient.login(username: username, password: password)
                 try TokenStorage.save(token: response.token)
                 UserDefaults.standard.set(response.name, forKey: "username")
-                AppManager.shared.showMainScreen()
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    AppManager.shared.showScreen(in: window, viewController: MainEventsViewController())
+                }
             } catch {
                 self.loginView.stopLoading(message: "Wrong username or password")
                 print("Login failed: \(error)")
