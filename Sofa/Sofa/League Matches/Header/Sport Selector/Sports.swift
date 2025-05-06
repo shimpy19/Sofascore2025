@@ -35,10 +35,17 @@ enum Sport: String, CaseIterable {
     }
         
     var queryValue: String {
-                switch self {
-                case .football: return "football"
-                case .basketball: return "basketball"
-                case .americanFootball: return "am-football"
+        switch self {
+        case .football: 
+            return "football"
+        case .basketball: 
+            return "basketball"
+        case .americanFootball: 
+            return "am-football"
         }
+    }
+    
+    var asQueryItem: URLQueryItem {
+        URLQueryItem(name: "sport", value: queryValue)
     }
 }

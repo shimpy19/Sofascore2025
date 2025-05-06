@@ -53,14 +53,11 @@ class EventDetailsView: BaseView {
         timeLabel.textAlignment = .center
         
         timeLabel.numberOfLines = 2
-        timeLabel.lineBreakMode = .byWordWrapping
         
         homeTeamLabel.numberOfLines = 2
-        homeTeamLabel.lineBreakMode = .byWordWrapping
         homeTeamLabel.textAlignment = .center
 
         awayTeamLabel.numberOfLines = 2
-        awayTeamLabel.lineBreakMode = .byWordWrapping
         awayTeamLabel.textAlignment = .center
 
     }
@@ -113,7 +110,6 @@ class EventDetailsView: BaseView {
             $0.top.equalTo(dividerLabel.snp.bottom).offset(8)
             $0.leading.equalTo(homeTeamLogoImageView.snp.trailing).offset(60)
             $0.trailing.equalTo(awayTeamLogoImageView.snp.leading).offset(-60)
-            
         }
 
         
