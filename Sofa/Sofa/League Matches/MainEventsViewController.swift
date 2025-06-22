@@ -126,7 +126,9 @@ extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LeagueHeaderView.reuseIdentifier) as? LeagueHeaderView else {
             return nil
         }
-        header.configure(with: league)
+        header.configure(with: league) { [weak self] in
+            self?.openLeagueDetails(for: league)
+        }
         return header
     }
 
@@ -155,6 +157,10 @@ extension MainEventsViewController: UITableViewDataSource, UITableViewDelegate {
     private func openMatchDetails(for event: Event, for sport: Sport) {
         let detailsVC = MatchDetailsViewController(event: event, sport: sport)
         navigationController?.pushViewController(detailsVC, animated: true)
+    }
+    private func openLeagueDetails(for league: League) {
+        let ldetailsVC = LeagueDetailsViewController(league: league, sport: selectedSport)
+        navigationController?.pushViewController(ldetailsVC, animated: true)
     }
     private func openSettings() {
         let settingsVC = SettingsViewController()

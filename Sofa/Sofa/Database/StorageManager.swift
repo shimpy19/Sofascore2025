@@ -15,12 +15,12 @@ final class StorageManager {
             let league = LeagueObject()
             league.id = event.league.id
             league.name = event.league.name
-            league.country = event.league.country.name
+            league.country = event.league.country?.name ?? "Unknown"
             league.logoUrl = event.league.logoUrl
             db.save(league)
 
             let eventObj = EventObject()
-            eventObj.id = event.id
+            eventObj.id = Int(event.id)
             eventObj.startTimestamp = event.startTimestamp
             eventObj.homeTeamName = event.homeTeam.name
             eventObj.awayTeamName = event.awayTeam.name
@@ -43,6 +43,25 @@ final class StorageManager {
     func deleteAll() {
         db.deleteAll()
     }
+    
+    func countPlayers(forTeamId teamId: Int) -> (total: Int, foreign: Int) {
+        let allPlayers = db.getAll(ofType: PlayerObject.self).filter { $0.teamId == teamId }
+        let total = allPlayers.count
+        let foreign = allPlayers.filter { $0.isForeign }.count
+        return (total, foreign)
+    }
+    
+    func savePlayers(_ players: [Player], forTeamId teamId: Int) {
+        for player in players {
+            let playerObj = PlayerObject()
+            playerObj.id = Int(player.id)
+            playerObj.name = player.name
+            playerObj.isForeign = player.isForeign
+            playerObj.teamId = teamId
+            db.save(playerObj)
+        }
+    }
+
 }
 
 

@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVC = isLoggedIn ? MainEventsViewController() : LoginViewController()
 
         let mainWindow = UIWindow(frame: UIScreen.main.bounds)
-        AppManager.shared.showScreen(in: mainWindow, viewController: rootVC)
+        AppManager.shared.showScreen(rootVC, window: mainWindow)
         self.window = mainWindow
 
         return true

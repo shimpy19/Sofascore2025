@@ -22,6 +22,11 @@ class EventDetailsView: BaseView {
     private let timeLabel = UILabel()
     private let dateLabel = UILabel()
     
+    var onTeamTapped: ((Team) -> Void)?
+
+    private var homeTeam: Team?
+    private var awayTeam: Team?
+    
     override func addViews() {
         addSubview(homeTeamLabel)
         addSubview(awayTeamLabel)
@@ -59,6 +64,20 @@ class EventDetailsView: BaseView {
 
         awayTeamLabel.numberOfLines = 2
         awayTeamLabel.textAlignment = .center
+        
+        homeTeamLabel.isUserInteractionEnabled = true
+        awayTeamLabel.isUserInteractionEnabled = true
+        
+        homeTeamLogoImageView.isUserInteractionEnabled = true
+        awayTeamLogoImageView.isUserInteractionEnabled = true
+
+        let homeTap = UITapGestureRecognizer(target: self, action: #selector(handleHomeTap))
+        let awayTap = UITapGestureRecognizer(target: self, action: #selector(handleAwayTap))
+
+        homeTeamLabel.addGestureRecognizer(homeTap)
+        awayTeamLabel.addGestureRecognizer(awayTap)
+        homeTeamLogoImageView.addGestureRecognizer(homeTap)
+        awayTeamLogoImageView.addGestureRecognizer(awayTap)
 
     }
         
@@ -134,6 +153,22 @@ class EventDetailsView: BaseView {
         dateLabel.text = viewModel.dateText
         homeTeamLogoImageView.setImage(with: viewModel.homeLogoUrl)
         awayTeamLogoImageView.setImage(with: viewModel.awayLogoUrl)
+        
+        homeTeam = viewModel.homeTeam
+        awayTeam = viewModel.awayTeam
     }
+    
+    @objc private func handleHomeTap() {
+        if let team = homeTeam {
+            onTeamTapped?(team)
+        }
+    }
+
+    @objc private func handleAwayTap() {
+        if let team = awayTeam {
+            onTeamTapped?(team)
+        }
+    }
+
 }
 

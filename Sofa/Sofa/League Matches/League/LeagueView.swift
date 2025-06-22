@@ -15,6 +15,8 @@ class LeagueView: BaseView {
     private let countryLabel = UILabel()
     private let iconImageView = UIImageView()
     private let leagueLabel = UILabel()
+    
+    var onLeagueTapped: (() -> Void)?
 
     override func addViews() {
         addSubview(logoImageView)
@@ -62,10 +64,16 @@ class LeagueView: BaseView {
             $0.top.bottom.equalToSuperview().inset(20)
         }
     }
-    
+    override func setupGestureRecognizers() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        addGestureRecognizer(tapGesture)
+    }
+    @objc private func handleTap() {
+        onLeagueTapped?()
+    }
     func update(with league: League) {
         logoImageView.setImage(with: league.logoUrl)
-        countryLabel.text = league.country.name
+        countryLabel.text = league.country?.name
         leagueLabel.text = league.name
     }
 }

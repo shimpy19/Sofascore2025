@@ -10,9 +10,10 @@ import Foundation
 struct HeaderDetailsViewModel {
     let titleText: String
     let logoUrl: String?
-
+    
     init(event: Event, sport: Sport) {
-        self.titleText = "\(sport.rawValue.capitalized), \(event.league.country.name), \(event.league.name)"
+        let countryName = event.league.country?.name ?? "Unknown Country"
+        self.titleText = "\(sport.rawValue.capitalized), \(countryName), \(event.league.name)"
         self.logoUrl = event.league.logoUrl
     }
 }

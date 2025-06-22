@@ -24,3 +24,11 @@ class EventObject: Object {
     @Persisted var league: LeagueObject?
 }
 
+class PlayerObject: Object {
+    @Persisted(primaryKey: true) var id: Int
+    @Persisted var name: String
+    @Persisted var isForeign: Bool
+    @Persisted var teamId: Int
+}
+
+

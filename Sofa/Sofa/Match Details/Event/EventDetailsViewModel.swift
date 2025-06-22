@@ -10,6 +10,7 @@ import UIKit
 import SofaAcademic
 
 struct EventDetailsViewModel {
+    let eventId: Int64
     let homeName: String
     let awayName: String
     let homeLogoUrl: String?
@@ -25,14 +26,24 @@ struct EventDetailsViewModel {
     let dateText: String
     let timeText: String
     let timeColor: UIColor
+    
+    let homeTeam: Team
+    let awayTeam: Team
 
     init(event: Event) {
+        
+        self.eventId = event.id
+        
+        self.homeTeam = event.homeTeam
+        self.awayTeam = event.awayTeam
+        
         homeName = event.homeTeam.name
         awayName = event.awayTeam.name
         homeLogoUrl = event.homeTeam.logoUrl
         awayLogoUrl = event.awayTeam.logoUrl
-        homeScoreText = event.homeScore.map { "\($0)" }
-        awayScoreText = event.awayScore.map { "\($0)" }
+        homeScoreText = event.homeScore.map { "\($0)" } ?? ""
+        awayScoreText = event.awayScore.map { "\($0)" } ?? ""
+
 
         timeText = EventDetailsViewModel.makeTimeText(for: event)
         dateText = EventDetailsViewModel.makeDateText(for: event)
@@ -55,15 +66,13 @@ struct EventDetailsViewModel {
         switch event.status {
         case .notStarted:
             return date.hourMinute
-        case .halftime:
+        case .halfTime:
             return "Half Time"
         case .finished:
             return "Full Time"
         case .inProgress:
             let minutes = Int(elapsedTime / 60)
             return "\(minutes)'"
-        default:
-            return ""
         }
     }
 
@@ -73,12 +82,13 @@ struct EventDetailsViewModel {
         return date.dayMonthYearTime
     }
     private static func scoreColors(for event: Event) -> (home: UIColor, away: UIColor) {
-        guard let home = event.homeScore, let away = event.awayScore else {
-            return (.primaryText, .primaryText)
-        }
 
         guard event.status == .finished else {
             return (.inProgress, .inProgress)
+        }
+        
+        guard let home = event.homeScore, let away = event.awayScore else {
+            return (.gray, .gray)
         }
 
         if home > away {
@@ -88,7 +98,9 @@ struct EventDetailsViewModel {
         } else {
             return (.primaryText, .primaryText)
         }
+
     }
+
     private static func makeScoreDividerColorAndText(for event: Event) -> (color:UIColor, text: String?) {
         if event.status == .notStarted {
             return (.primaryText, nil)

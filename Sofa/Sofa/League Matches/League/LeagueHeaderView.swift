@@ -16,6 +16,7 @@ class LeagueHeaderView: UITableViewHeaderFooterView,BaseViewProtocol {
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
+        setupGestureRecognizers()
         addViews()
         setupConstraints()
     }
@@ -32,8 +33,10 @@ class LeagueHeaderView: UITableViewHeaderFooterView,BaseViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with league: League) {
+    func configure(with league: League, onTap: @escaping () -> Void) {
         leagueView.update(with: league)
+        leagueView.onLeagueTapped = onTap
     }
+
 
 }

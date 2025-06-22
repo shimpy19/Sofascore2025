@@ -65,7 +65,7 @@ class SettingsView: BaseView {
         DatabaseManager.shared.deleteAll()
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
-            AppManager.shared.showScreen(in: window, viewController:LoginViewController())
+            AppManager.shared.showScreen(LoginViewController(), window:window)
         }
     }
 }

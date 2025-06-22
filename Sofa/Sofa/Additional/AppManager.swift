@@ -6,16 +6,19 @@
 //
 import UIKit
 
-enum AppManager {
+final class AppManager {
     static let shared = AppManager()
 
     private init() {}
 
-    func showScreen(in window: UIWindow, viewController: UIViewController) {
-        let navVC = UINavigationController(rootViewController: viewController)
+    func showScreen(_ viewController: UIViewController, window: UIWindow) {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = scene.windows.first else { return }
+
+        let mainVC = viewController
+        let navVC = UINavigationController(rootViewController: mainVC)
         window.rootViewController = navVC
         window.makeKeyAndVisible()
     }
-
 }
 

@@ -16,9 +16,41 @@ enum APIClient {
         if let sport = sport {
             queryItems.append(sport.asQueryItem)
         }
-        return try await fetch(path: "/secure/events", queryItems: queryItems)
+        return try await fetch(path: "/events", queryItems: queryItems)
     }
-    
+
+    static func getEvent(id: Int64) async throws -> Event {
+        return try await fetch(path: "/events/\(id)")
+    }
+
+    static func getEventIncidents(eventId: Int64) async throws -> [Incident] {
+        return try await fetch(path: "/events/\(eventId)/incidents")
+    }
+
+    static func getLeague(id: Int) async throws -> League {
+        return try await fetch(path: "/leagues/\(id)")
+    }
+
+    static func getLeagueMatches(id: Int) async throws -> [Event] {
+        return try await fetch(path: "/leagues/\(id)/matches")
+    }
+
+    static func getLeagueStandings(id: Int) async throws -> [Standings] {
+        return try await fetch(path: "/leagues/\(id)/standings")
+    }
+
+    static func getTeam(id: Int) async throws -> TeamInfo {
+        return try await fetch(path: "/teams/\(id)")
+    }
+
+    static func getTeamPlayers(id: Int) async throws -> [Player] {
+        return try await fetch(path: "/teams/\(id)/players")
+    }
+
+    static func getTeamTournaments(id: Int) async throws -> [League] {
+        return try await fetch(path: "/teams/\(id)/tournaments")
+    }
+
     private static func fetch<T: Decodable>(path: String, queryItems: [URLQueryItem] = []) async throws -> T {
         var components = URLComponents(string: baseURL)
         components?.path = path
@@ -29,12 +61,12 @@ enum APIClient {
         }
 
         var request = URLRequest(url: url)
-        if path.contains("/secure/"), let token = TokenStorage.get() {
+        if !path.contains("/login"), let token = TokenStorage.get() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
         let (data, response) = try await URLSession.shared.data(for: request)
-
+        
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             throw URLError(.badServerResponse)
         }

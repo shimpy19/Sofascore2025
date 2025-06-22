@@ -10,7 +10,7 @@ import UIKit
 import SofaAcademic
 import SnapKit
 
-class EventViewModel {
+class RoundEventViewModel {
     let event: Event
 
     init(event: Event) {
@@ -48,7 +48,7 @@ class EventViewModel {
 
     var formattedStartTime: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+        formatter.dateFormat = "dd.MM.yy."
         let startDate = Date(timeIntervalSince1970: TimeInterval(event.startTimestamp))
         return formatter.string(from: startDate)
     }
